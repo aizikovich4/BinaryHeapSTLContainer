@@ -5,15 +5,18 @@ namespace bheap_STL {
 	template <typename T> class bheap
 	{
 		private:
-
+			size_t _size;
+			size_t _limit;
+			T *head;
 		public:
 			bheap();
+			bheap(const unsigned int n);
 			bheap(const bheap& _Right);
 			~bheap();
-			bool empty() { return true; }; //boris
-			size_t size() { return 0; }; //boris
+			bool empty() noexcept { return _size; };
+			size_t size() noexcept { return _size; }; 
 			void clear();
-			void insert();
+			void insert(T value);
 			void swap(T other); //boris
 
 	};
@@ -22,18 +25,35 @@ namespace bheap_STL {
 
 	template <typename T> bheap<T>::bheap()
 	{
-		
 		cout << "Constructor by-default" << endl;
+		_size = 20;
+		head = new T[_size];
+		
 	}
 
 	template <typename T> bheap<T>::~bheap()
 	{
 		cout << "Destructor" << endl;
+		if (head)
+			delete[] head;
 	}
 
 	template <typename T> bheap<T>::bheap(const bheap& _Right)
 	{
 		cout << "Copy constructor" << endl;
+	}
+
+
+	template <typename T> void bheap<T>::insert(T value)
+	{
+		cout << "insert" << endl;
+		if ( (limit - size) < (size / 2) ) { //if container fill on half, get new memory and copy all elements to new memory
+			limit *= 2;
+			T* tmp = new T[limit];
+
+
+		}
+		
 	}
 
 

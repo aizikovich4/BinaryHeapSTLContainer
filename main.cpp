@@ -14,6 +14,7 @@ int main()
 {
 	bheap<int> heapasd;
 	bheap<float> a;
+	a.insert(2);
 
 	return 0;
 }
