@@ -14,9 +14,12 @@ int main()
 {
 	bheap<int> heapasd;
 	bheap<float> a;
-	a.insert(2);
+	cout << a.empty() << endl;
+	heapasd.insert(2);
+	heapasd.insert(4);
+	cout << heapasd << endl;
+	cout << a << endl;
 
-	return 0;
 }
 
 

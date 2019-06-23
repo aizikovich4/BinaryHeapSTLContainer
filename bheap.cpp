@@ -2,40 +2,7 @@
 
 
 /*
-struct Heap* heap_create(int maxsize)
-{
-	struct Heap* heap_ptr = NULL;
-	
-	heap_ptr =(Heap*) malloc(sizeof(struct Heap));
-	if (heap_ptr)
-	{
-		heap_ptr->maxsize = maxsize;
-		heap_ptr->count_items = 0;
-		heap_ptr->items = (Heap_item*)malloc(sizeof(struct Heap_item) * maxsize);
-		if (!heap_ptr->items)
-		{
-			exit(1);
-		}
 
-		return heap_ptr;
-	}
-	else
-		exit(1);
-
-}
-
-void heap_free(struct Heap* h)
-{
-	free(h->items);
-	free(h);
-}
-
-static void heap_swap(struct Heap_item* first, struct Heap_item* second)
-{
-	struct Heap_item tmp = *first;
-	*first = *second;
-	*second = tmp;
-}
 
 struct Heap_item heap_max(const struct Heap* heap)
 {
@@ -113,13 +80,6 @@ int heap_removemax(struct Heap* heap, struct Heap_item* value)
 
 
 	return 1;
-}
-
-unsigned int heap_size(struct Heap* heap)
-{
-	int count = 0;
-	count = heap->count_items;
-	return count;
 }
 
 */
