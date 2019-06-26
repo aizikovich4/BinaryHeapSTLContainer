@@ -20,38 +20,6 @@ struct Heap_item heap_max(const struct Heap* heap)
 
 }
 
-void heap_display(struct Heap* heap) {
-	int i;
-
-	printf("Queue: ");
-	for (i = 0; i <= heap->count_items; ++i) {
-		printf("%d ", heap->items[i].priority);
-	}
-	printf("\n");
-
-}
-
-
-int heap_insert(struct Heap* heap, int priority, char* value, const unsigned long data)
-{
-	int i = 0;
-	struct Heap_item* tmp = NULL;
-
-
-	++heap->count_items;
-	heap->items[heap->count_items].priority = priority;
-	heap->items[heap->count_items].value = value;
-	heap->items[heap->count_items].data = data;
-
-	// heapify, push to up
-	for (i = heap->count_items; i > 1 && heap->items[i].priority > heap->items[i / 2].priority; i = i / 2)
-	{
-		heap_swap(&heap->items[i], &heap->items[i / 2]);
-	}
-
-	return 0;
-}
-
 int heap_removemax(struct Heap* heap, struct Heap_item* value)
 {
 	int largest_index, leftChild;
