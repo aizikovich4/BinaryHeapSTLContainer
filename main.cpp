@@ -12,12 +12,17 @@ using namespace bheap_STL;
 
 int main()
 {
-	bheap<int> heapasd;
-	bheap<float> a;
-	cout << a.empty() << endl;
-	heapasd.insert(2);
-	heapasd.insert(4);
-	cout << heapasd << endl;
-	cout << a << endl;
+	bheap<int> heap;
+	bheap<int> heap2;	
+
+	for(auto i=0; i<20; ++i)
+		heap.insert(i);
+	
+	for (auto i = 0; i < 40; ++i)
+		heap2.insert(i);
+
+	heap.swap(heap2);
+
+	cout << heap << endl;
 
 }

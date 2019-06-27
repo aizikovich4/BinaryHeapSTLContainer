@@ -2,87 +2,80 @@
 #include <iostream>
 #include <iterator>
 #include <algorithm>
+#include <memory>
+#include <vector>
+
 using namespace std;
 namespace bheap_STL {
-	template <typename T>  //forward declare to make function declaration possible
-	class bheap;
+	template <typename T> 
+		class bheap; //forward declare to make function declaration possible
 	
-	template <typename T>  // declaration
-	ostream& operator<<(ostream& os, const bheap<T>& );
+	template <typename T>  
+		ostream& operator<<(ostream& os, const bheap<T>& ); // declaration
 
 	template <typename T> 
-	class bheap
+		class bheap
 	{
 		private:
-			const size_t _DEFAULT_LIMIT = 20;
-			size_t _size;	//current size of queue
-			size_t _limit;	//current limit of queue
-			T *_queue;
+			vector<T> _data;
 			void heapify() noexcept;
 		public:
 			bheap();
+			bheap(initializer_list<T> values);
 			bheap(const unsigned int n);
-			bheap(const bheap& _Right);
-			~bheap();
-			bool empty() noexcept { return _size == 0; };
-			size_t size() noexcept { return _size; }; 
-			void clear()noexcept {
-				delete[] _queue;
-				_size = 0;
-				_limit = _DEFAULT_LIMIT;
-			};
-			void insert(T value);
+			bheap(const bheap& rhs);
+			bool empty() const noexcept { return _data.empty(); };
+			size_t size()const noexcept { return _data.size(); };
+			size_t max_size()const noexcept { return _data.max_size(); };
+			void swap(bheap<T>& other);
 
+			void clear()const noexcept { _data.clear(); };
+			void insert(T value);
 			friend ostream& operator<< <T>(ostream& os, const bheap<T>& rhs) ;
+			bool operator==(const bheap<T>& rhs) { return (this->_data == rhs._data); };
+			bool operator!=(const bheap<T>& rhs) { return !(*this == rhs); };
+			bheap<T>& operator=(const bheap<T>& rhs) { 
+				this->_data = rhs._data;
+				heapify(); 
+				return *this; 
+			};
+			bheap<T>& operator=(const std::initializer_list<T> rhs) {
+				copy(rhs._data(), rhs._data(), _data.begin());
+				heapify(); 
+				return *this;
+			};
 
 	};
-
-	template <typename T> ostream& operator<<(ostream& os, const bheap<T>& rhs) {
-		if (rhs._size)
-			copy(rhs._queue + 1, rhs._queue + rhs._size + 1, ostream_iterator<T>(os, "  "));
-		return os;
-	}
+	
 	template <typename T> bheap<T>::bheap()
 	{
-		cout << "Constructor by-default" << endl;
-		_limit = _DEFAULT_LIMIT;
-		_size = 0;
-		_queue = new T[_limit];
-		
+				
 	}
-
-	template <typename T> bheap<T>::~bheap()
+	
+	template <typename T> bheap<T>::bheap(initializer_list<T> values) 
 	{
-		cout << "Destructor" << endl;
-		if (_queue)
-			delete[] _queue;
+		std::copy(values.begin(), values.end(), _data.begin());
 	}
 
-	template <typename T> bheap<T>::bheap(const bheap& _Right)
+	
+	template <typename T> bheap<T>::bheap(const bheap<T>& rhs)
 	{
 		cout << "Copy constructor" << endl;
+		if (*this != rhs)
+			_data = rhs._data;
 	}
 
+	template <typename T> void bheap<T>::swap(bheap<T>& other)
+	{
+			bheap<T> temp(other);
+			other = *this;
+			*this = temp;
+	}	
 
 	template <typename T> void bheap<T>::insert(T value)
 	{
 		cout << "insert" << endl;
-		if ( (_limit - _size) < (_size / 2) ) { //if container fill on half, get new memory and copy queue to new place
-			cout << "increase the queue" << endl;
-			_limit *= 2;
-			try {
-				T* tmp = new T[_limit];
-
-			}
-			catch (...){
-				cout << "something bad" << endl;
-			}
-			//TODO boris - make copy 
-		}
-		
-		++this->_size;
-		_queue[this->_size] = value;
-		
+		_data.push_back(value);
 		heapify();
 		
 	}
@@ -90,27 +83,84 @@ namespace bheap_STL {
 	template <typename T> void bheap<T>::heapify() noexcept
 	{
 		cout << "heapify" << endl;
+		size_t i = 0;
 		// heapify, push to up
-		for (size_t i = this->_size; i > 1 && _queue[i] > _queue[i / 2]; i = i / 2)
-		{
-			swap(_queue[i], _queue[i / 2]);
+		if ((i=_data.size()-1) > 1)
+		{	
+			for (;i > 1 &&  _data[i] > _data[i / 2]; i = i / 2)
+			{
+				std::swap(_data[i], _data[i / 2]);
+			}
 		}
+	}
+
+	template <typename T> ostream& operator<<(ostream& os, const bheap<T>& rhs) {
+		if (rhs._data.size())
+			copy(rhs._data.begin()+1, rhs._data.end(), ostream_iterator<T>(os, "  "));
+		return os;
+	}
+
+	
+	///-----------------iterator realization---------------------
+
+	template<typename T> 
+		class BHeapIterator : public std::iterator<std::input_iterator_tag, T>
+	{
+		friend bheap;
+	private:
+		BHeapIterator(T* p);
+	public:
+		BHeapIterator(const BHeapIterator& it);
+
+		bool operator!=(BHeapIterator const& other) const;
+		bool operator==(BHeapIterator const& other) const; //need for BOOST_FOREACH
+		typename BHeapIterator::reference operator*() const;
+		BHeapIterator& operator++();
+	private:
+		T* p;
+	};
+
+	template<typename T>
+	BHeapIterator<T>::BHeapIterator(T* p) :
+		p(p)
+	{
+
+	}
+
+	template<typename T>
+	BHeapIterator<T>::BHeapIterator(const BHeapIterator& it) :
+		p(it.p)
+	{
+
+	}
+
+	template<typename T>
+	bool BHeapIterator<T>::operator!=(BHeapIterator const& other) const
+	{
+		return p != other.p;
+	}
+
+	template<typename T>
+	bool BHeapIterator<T>::operator==(BHeapIterator const& other) const
+	{
+		return p == other.p;
+	}
+
+	template<typename T>
+	typename BHeapIterator<T>::reference BHeapIterator<T>::operator*() const
+	{
+		return *p;
+	}
+
+	template<typename T>
+	BHeapIterator<T>& BHeapIterator<T>::operator++()
+	{
+		++p;
+		return *this;
 	}
 }
 /*
-struct Heap_item {
-	int priority;               // priority of elemen
-	unsigned long data;
-	char* value;                // data
-};
 
-struct Heap {
-	int maxsize;                 // max heap size
-	int count_items;             // count of elements ih heap
-	struct Heap_item* items;     //heap elements, we will stories them from first position, not from zero position
-};
-
-struct Heap* heap_create(int maxsize);
 struct Heap_item heap_max(const struct Heap* heap);
 void            heap_display(struct Heap* heap);
 int             heap_insert(struct Heap* heap, int priority, char* value, const unsigned long data);
