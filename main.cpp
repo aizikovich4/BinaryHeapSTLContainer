@@ -14,6 +14,7 @@ int main()
 {
 	bheap<int> heap;
 	bheap<int> heap2;	
+	bheap<int> heap3;
 
 	for(auto i=0; i<20; ++i)
 		heap.insert(i);
@@ -23,6 +24,7 @@ int main()
 
 	heap.swap(heap2);
 
-	cout << heap << endl;
-
+    for(auto it=begin(heap); it!=end(heap); ++it)
+		cout << *it << "  ";
+	
 }

@@ -14,67 +14,75 @@ namespace bheap_STL {
 		ostream& operator<<(ostream& os, const bheap<T>& ); // declaration
 
 	template <typename T> 
-		class bheap
+	class bheap
 	{
-		private:
-			vector<T> _data;
-			void heapify() noexcept;
-		public:
-			bheap();
-			bheap(initializer_list<T> values);
-			bheap(const unsigned int n);
-			bheap(const bheap& rhs);
-			bool empty() const noexcept { return _data.empty(); };
-			size_t size()const noexcept { return _data.size(); };
-			size_t max_size()const noexcept { return _data.max_size(); };
-			void swap(bheap<T>& other);
+	private:
+		vector<T> _data;
+		void heapify() noexcept;
+	public:
+		
+		bheap() {};
+		friend iterator;
+		bheap(initializer_list<T> values) { std::copy(values.begin(), values.end(), _data.begin()); };
+		bheap(const unsigned int n);
+		bheap(const bheap& rhs);
+		bool empty() const noexcept { return _data.empty(); };
+		size_t size()const noexcept { return _data.size(); };
+		size_t max_size()const noexcept { return _data.max_size(); };
+		void swap(bheap<T>& other);
 
-			void clear()const noexcept { _data.clear(); };
-			void insert(T value);
-			friend ostream& operator<< <T>(ostream& os, const bheap<T>& rhs) ;
-			bool operator==(const bheap<T>& rhs) { return (this->_data == rhs._data); };
-			bool operator!=(const bheap<T>& rhs) { return !(*this == rhs); };
-			bheap<T>& operator=(const bheap<T>& rhs) { 
-				this->_data = rhs._data;
-				heapify(); 
-				return *this; 
-			};
-			bheap<T>& operator=(const std::initializer_list<T> rhs) {
-				copy(rhs._data(), rhs._data(), _data.begin());
-				heapify(); 
-				return *this;
-			};
+		void clear()const noexcept { _data.clear(); };
+		void insert(T value);
+
+		friend ostream& operator<< <T>(ostream& os, const bheap<T>& rhs);
+		decltype(auto) begin() { return _data.begin(); };
+		decltype(auto) end(){return _data.end(); };		
+		bool operator==(const bheap<T>& rhs) { return (this->_data == rhs._data); };
+		bool operator!=(const bheap<T>& rhs) { return !(*this == rhs); };
+
+		bheap<T>& operator=(const bheap<T>& rhs) { 
+			this->_data = rhs._data;
+			heapify(); 
+			return *this; 
+		};
+
+		bheap<T>& operator=(const std::initializer_list<T> rhs) {
+			copy(rhs._data(), rhs._data(), _data.begin());
+			heapify(); 
+			return *this;
+		};
+		struct iterator {
+			T *ptr;
+			iterator(T* ptr_ = 0) : ptr(ptr_) {};
+			T& operator*() { return *ptr; }
+			T* operator->() { return ptr; }
+			T* operator++() { return ++ptr; }
+			T* operator--() { return --ptr; }
+			size_t _Getcount() { return bheap._data.size(); }
+			bool operator==(const iterator& other) const { return ptr == other.ptr; }
+			bool operator!=(const iterator& other) const { return !(*this == other); }
+		};
+
 
 	};
 	
-	template <typename T> bheap<T>::bheap()
-	{
-				
-	}
 	
-	template <typename T> bheap<T>::bheap(initializer_list<T> values) 
-	{
-		std::copy(values.begin(), values.end(), _data.begin());
-	}
-
 	
 	template <typename T> bheap<T>::bheap(const bheap<T>& rhs)
 	{
-		cout << "Copy constructor" << endl;
 		if (*this != rhs)
 			_data = rhs._data;
 	}
 
 	template <typename T> void bheap<T>::swap(bheap<T>& other)
 	{
-			bheap<T> temp(other);
-			other = *this;
-			*this = temp;
+		bheap<T> temp(other);
+		other = *this;
+		*this = temp;
 	}	
 
 	template <typename T> void bheap<T>::insert(T value)
 	{
-		cout << "insert" << endl;
 		_data.push_back(value);
 		heapify();
 		
@@ -82,7 +90,6 @@ namespace bheap_STL {
 
 	template <typename T> void bheap<T>::heapify() noexcept
 	{
-		cout << "heapify" << endl;
 		size_t i = 0;
 		// heapify, push to up
 		if ((i=_data.size()-1) > 1)
@@ -104,61 +111,72 @@ namespace bheap_STL {
 	///-----------------iterator realization---------------------
 
 	template<typename T> 
-		class BHeapIterator : public std::iterator<std::input_iterator_tag, T>
+		class heapIt : public std::iterator<std::output_iterator_tag, T>
 	{
-		friend bheap;
 	private:
-		BHeapIterator(T* p);
+		heapIt(T* p);
 	public:
-		BHeapIterator(const BHeapIterator& it);
+		typedef T          value_type;
+		/* T is template param */
+		typedef T         *pointer;
+		typedef const T   *const_pointer;
+		typedef T         &reference;
+		typedef const T   &const_reference;
+		typedef size_t     size_type;
+		typedef ptrdiff_t  difference_type;
+		heapIt(const heapIt& it);
 
-		bool operator!=(BHeapIterator const& other) const;
-		bool operator==(BHeapIterator const& other) const; //need for BOOST_FOREACH
-		typename BHeapIterator::reference operator*() const;
-		BHeapIterator& operator++();
+		bool operator!=(heapIt const& other) const;
+		bool operator==(heapIt const& other) const; //need for BOOST_FOREACH
+		//typename heapIt::reference operator*() const;
+		heapIt& operator++();
+		heapIt& operator--();
 	private:
 		T* p;
 	};
 
 	template<typename T>
-	BHeapIterator<T>::BHeapIterator(T* p) :
+	heapIt<T>::heapIt(T* p) :
 		p(p)
 	{
 
 	}
 
 	template<typename T>
-	BHeapIterator<T>::BHeapIterator(const BHeapIterator& it) :
+	heapIt<T>::heapIt(const heapIt& it) :
 		p(it.p)
 	{
 
 	}
 
 	template<typename T>
-	bool BHeapIterator<T>::operator!=(BHeapIterator const& other) const
+	bool heapIt<T>::operator!=(heapIt const& other) const
 	{
 		return p != other.p;
 	}
 
 	template<typename T>
-	bool BHeapIterator<T>::operator==(BHeapIterator const& other) const
+	bool heapIt<T>::operator==(heapIt const& other) const
 	{
 		return p == other.p;
 	}
 
+	/*
 	template<typename T>
-	typename BHeapIterator<T>::reference BHeapIterator<T>::operator*() const
+	typename heapIt<T>::reference heapIt<T>::operator*() const
 	{
 		return *p;
 	}
+	*/
 
 	template<typename T>
-	BHeapIterator<T>& BHeapIterator<T>::operator++()
+	heapIt<T>& heapIt<T>::operator++()
 	{
 		++p;
 		return *this;
 	}
 }
+
 /*
 
 struct Heap_item heap_max(const struct Heap* heap);
