@@ -21,6 +21,47 @@ namespace bheap_STL {
 		void heapify() noexcept;
 	public:
 		
+
+		class iterator
+		{
+		public:
+			typedef iterator self_type;
+			typedef T value_type;
+			typedef T& reference;
+			typedef T* pointer;
+			typedef std::forward_iterator_tag iterator_category;
+			typedef int difference_type;
+			iterator(pointer ptr) : ptr_(ptr) { }
+			self_type operator++() { ptr_++; return *this; } // PREFIX
+			self_type operator++(int junk) { self_type i = *this; ptr_++; return i; } // POSTFIX
+			reference operator*() { return *ptr_; }
+			pointer operator->() { return ptr_; }
+			bool operator==(const self_type& rhs) { return ptr_ == rhs.ptr_; }
+			bool operator!=(const self_type& rhs) { return ptr_ != rhs.ptr_; }
+		private:
+			pointer ptr_;
+		};
+
+		class const_iterator
+		{
+		public:
+			typedef const_iterator self_type;
+			typedef T value_type;
+			typedef T& reference;
+			typedef T* pointer;
+			typedef int difference_type;
+			typedef std::forward_iterator_tag iterator_category;
+			const_iterator(pointer ptr) : ptr_(ptr) { }
+			self_type operator++() { self_type i = *this; ptr_++; return i; }
+			self_type operator++(int junk) { ptr_++; return *this; }
+			const value_type& const_iterator::operator*() { return *ptr_; }
+			const pointer operator->() { return ptr_; }
+			bool operator==(const self_type& rhs) { return ptr_ == rhs.ptr_; }
+			bool operator!=(const self_type& rhs) { return ptr_ != rhs.ptr_; }
+		private:
+			pointer ptr_;
+		};
+
 		bheap() {};
 		friend iterator;
 		bheap(initializer_list<T> values) { std::copy(values.begin(), values.end(), _data.begin()); };
@@ -37,8 +78,23 @@ namespace bheap_STL {
 		friend ostream& operator<< <T>(ostream& os, const bheap<T>& rhs);
 		decltype(auto) begin() { return _data.begin(); };
 		decltype(auto) end(){return _data.end(); };		
+		const_iterator begin() const
+		{
+			return const_iterator(_data.begin);
+		}
+
+		const_iterator end() const
+		{
+			return const_iterator(_data.end());
+		}
+
 		bool operator==(const bheap<T>& rhs) { return (this->_data == rhs._data); };
 		bool operator!=(const bheap<T>& rhs) { return !(*this == rhs); };
+		T& operator[](size_t index){
+			assert(index < _data.size());
+			return _data[index];
+		}
+
 
 		bheap<T>& operator=(const bheap<T>& rhs) { 
 			this->_data = rhs._data;
@@ -51,18 +107,6 @@ namespace bheap_STL {
 			heapify(); 
 			return *this;
 		};
-		struct iterator {
-			T *ptr;
-			iterator(T* ptr_ = 0) : ptr(ptr_) {};
-			T& operator*() { return *ptr; }
-			T* operator->() { return ptr; }
-			T* operator++() { return ++ptr; }
-			T* operator--() { return --ptr; }
-			size_t _Getcount() { return bheap._data.size(); }
-			bool operator==(const iterator& other) const { return ptr == other.ptr; }
-			bool operator!=(const iterator& other) const { return !(*this == other); }
-		};
-
 
 	};
 	

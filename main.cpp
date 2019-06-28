@@ -21,10 +21,10 @@ int main()
 	
 	for (auto i = 0; i < 40; ++i)
 		heap2.insert(i);
-
+	
 	heap.swap(heap2);
 
     for(auto it=begin(heap); it!=end(heap); ++it)
 		cout << *it << "  ";
-	
+
 }
