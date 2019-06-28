@@ -23,7 +23,7 @@ int main()
 		heap2.insert(i);
 	
 	heap.swap(heap2);
-
+	cout << "Binary heap" << endl;
     for(auto it=begin(heap); it!=end(heap); ++it)
 		cout << *it << "  ";
 
