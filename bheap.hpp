@@ -34,7 +34,7 @@ namespace bheap_STL {
 			iterator(pointer ptr) : ptr_(ptr) { }
 			self_type operator++() { ptr_++; return *this; } // PREFIX
 			self_type operator++(int junk) { self_type i = *this; ptr_++; return i; } // POSTFIX
-			reference operator*() { return *ptr_; }
+			value_type& operator*() { return *ptr_; }
 			pointer operator->() { return ptr_; }
 			bool operator==(const self_type& rhs) { return ptr_ == rhs.ptr_; }
 			bool operator!=(const self_type& rhs) { return ptr_ != rhs.ptr_; }
