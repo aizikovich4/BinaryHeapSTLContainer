@@ -1,4 +1,4 @@
-#pragma once
+	#pragma once
 #include <iostream>
 #include <iterator>
 #include <algorithm>
@@ -54,7 +54,7 @@ namespace bheap_STL {
 			const_iterator(pointer ptr) : ptr_(ptr) { }
 			self_type operator++() { self_type i = *this; ptr_++; return i; }
 			self_type operator++(int junk) { ptr_++; return *this; }
-			const value_type& const_iterator::operator*() { return *ptr_; }
+			const value_type& operator*() { return *ptr_; }
 			const pointer operator->() { return ptr_; }
 			bool operator==(const self_type& rhs) { return ptr_ == rhs.ptr_; }
 			bool operator!=(const self_type& rhs) { return ptr_ != rhs.ptr_; }
@@ -150,83 +150,4 @@ namespace bheap_STL {
 			copy(rhs._data.begin()+1, rhs._data.end(), ostream_iterator<T>(os, "  "));
 		return os;
 	}
-
-	
-	///-----------------iterator realization---------------------
-
-	template<typename T> 
-		class heapIt : public std::iterator<std::output_iterator_tag, T>
-	{
-	private:
-		heapIt(T* p);
-	public:
-		typedef T          value_type;
-		/* T is template param */
-		typedef T         *pointer;
-		typedef const T   *const_pointer;
-		typedef T         &reference;
-		typedef const T   &const_reference;
-		typedef size_t     size_type;
-		typedef ptrdiff_t  difference_type;
-		heapIt(const heapIt& it);
-
-		bool operator!=(heapIt const& other) const;
-		bool operator==(heapIt const& other) const; //need for BOOST_FOREACH
-		//typename heapIt::reference operator*() const;
-		heapIt& operator++();
-		heapIt& operator--();
-	private:
-		T* p;
-	};
-
-	template<typename T>
-	heapIt<T>::heapIt(T* p) :
-		p(p)
-	{
-
-	}
-
-	template<typename T>
-	heapIt<T>::heapIt(const heapIt& it) :
-		p(it.p)
-	{
-
-	}
-
-	template<typename T>
-	bool heapIt<T>::operator!=(heapIt const& other) const
-	{
-		return p != other.p;
-	}
-
-	template<typename T>
-	bool heapIt<T>::operator==(heapIt const& other) const
-	{
-		return p == other.p;
-	}
-
-	/*
-	template<typename T>
-	typename heapIt<T>::reference heapIt<T>::operator*() const
-	{
-		return *p;
-	}
-	*/
-
-	template<typename T>
-	heapIt<T>& heapIt<T>::operator++()
-	{
-		++p;
-		return *this;
-	}
 }
-
-/*
-
-struct Heap_item heap_max(const struct Heap* heap);
-void            heap_display(struct Heap* heap);
-int             heap_insert(struct Heap* heap, int priority, char* value, const unsigned long data);
-int             heap_removemax(struct Heap* heap, struct Heap_item* value);
-unsigned int    heap_size(struct Heap* heap);
-
-*/
