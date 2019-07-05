@@ -14,7 +14,11 @@ requirements for windows :
   5.3.1, cmake 3.10
 
 build on windows: 
+  
   run.bat
   
 build on linux: 
-  run.sh   (if not running:  chmod +x run.sh)
+  
+  run.sh   
+  
+  (if not running:  chmod +x run.sh)
